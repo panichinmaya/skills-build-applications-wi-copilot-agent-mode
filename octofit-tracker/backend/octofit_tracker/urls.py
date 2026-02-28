@@ -1,3 +1,5 @@
+
+import os
 """octofit_tracker URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -13,6 +15,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
@@ -27,14 +30,21 @@ router.register(r'activities', ActivityViewSet)
 router.register(r'leaderboard', LeaderboardViewSet)
 router.register(r'workouts', WorkoutViewSet)
 
+
 @api_view(['GET'])
+
 def api_root(request):
+    codespace_name = os.environ.get('CODESPACE_NAME', 'localhost')
+    if codespace_name != 'localhost':
+        base_url = f"https://{codespace_name}-8000.app.github.dev/api/"
+    else:
+        base_url = "http://localhost:8000/api/"
     return Response({
-        'users': request.build_absolute_uri('users/'),
-        'teams': request.build_absolute_uri('teams/'),
-        'activities': request.build_absolute_uri('activities/'),
-        'leaderboard': request.build_absolute_uri('leaderboard/'),
-        'workouts': request.build_absolute_uri('workouts/'),
+        'users': f'{base_url}users/',
+        'teams': f'{base_url}teams/',
+        'activities': f'{base_url}activities/',
+        'leaderboard': f'{base_url}leaderboard/',
+        'workouts': f'{base_url}workouts/',
     })
 
 urlpatterns = [
